@@ -3,16 +3,16 @@ package com.example.weatherapp.model;
 import com.google.gson.annotations.SerializedName;
 
 public class DataList {
-    @SerializedName("dt")
-    long time;
+    @SerializedName("dt_txt")
+    String time;
     @SerializedName("main")
     Temp temp;
 
-    public long getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(String time) {
         this.time = time;
     }
 

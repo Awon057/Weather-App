@@ -7,10 +7,8 @@ import java.util.List;
 public class Data {
     @SerializedName("city")
     City city;
-    @SerializedName("main")
-    Temp temp;
-    @SerializedName("dt")
-    long time;
+    @SerializedName("list")
+    List<DataList> dataList;
 
     public City getCity() {
         return city;
@@ -20,19 +18,11 @@ public class Data {
         this.city = city;
     }
 
-    public Temp getTemp() {
-        return temp;
+    public List<DataList> getDataList() {
+        return dataList;
     }
 
-    public void setTemp(Temp temp) {
-        this.temp = temp;
-    }
-
-    public long getTime() {
-        return time;
-    }
-
-    public void setTime(long time) {
-        this.time = time;
+    public void setDataList(List<DataList> dataList) {
+        this.dataList = dataList;
     }
 }

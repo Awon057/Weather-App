@@ -4,13 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 public class Temp {
     @SerializedName("temp")
-    Double temp;
+    Double dayTemp;
 
-    public Double getTemp() {
-        return temp;
+    public Double getDayTemp() {
+        return dayTemp;
     }
 
-    public void setTemp(Double temp) {
-        this.temp = temp;
+    public void setDayTemp(Double dayTemp) {
+        this.dayTemp = dayTemp;
     }
 }

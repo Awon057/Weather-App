@@ -42,14 +42,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SliderLayout sliderShow;
     private TextView temp;
     private ArrayList<String> temparature;
-    private ArrayList<Long> time;
+    private ArrayList<String> time;
     private long timeInMili;
-    int pos=0;
+    int pos = 0;
     private long size;
-    private long minn=999999999;
+    private long minn = 999999999;
     private ImageView back;
     private ImageView forward;
     private CharSequence s;
+    private TextView date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +58,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         temp = (TextView) findViewById(R.id.temp);
-        back = (ImageView)findViewById(R.id.back);
-        forward = (ImageView)findViewById(R.id.forward);
+        date = (TextView) findViewById(R.id.time);
+        back = (ImageView) findViewById(R.id.back);
+        forward = (ImageView) findViewById(R.id.forward);
 
         temparature = new ArrayList<>();
         time = new ArrayList<>();
 
         Date d = new Date();
-        s  = DateFormat.format("MM/dd/yyyy", d.getTime());
+        s = DateFormat.format("MM/dd/yyyy", d.getTime());
         getLocation();
 
         back.setOnClickListener(this);
@@ -92,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
 
-                        WeatherSync.getData(latitude,longitude,returnData);
+                        WeatherSync.getData(latitude, longitude, returnData);
                     }
 
                     @Override
@@ -117,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onLocationChanged(Location location) {
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
+
+                        WeatherSync.getData(latitude, longitude, returnData);
                     }
 
                     @Override
@@ -141,52 +145,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
+
     ReturnData returnData = new ReturnData() {
         @Override
         public void returnData(Data data) {
             int i;
-            /*size = data.getTemps().size();
-            for (i=0;i<data.getTemps().size();i++) {
-                time.add(data.getTemps().get(i).getTime());
-                temparature.add(data.getTemps().get(i).getTemp().getTemp()+"");
+            size = data.getDataList().size();
+            for (i = 0; i < data.getDataList().size(); i++) {
+                time.add(data.getDataList().get(i).getTime());
+                temparature.add(data.getDataList().get(i).getTemp().getDayTemp() + "");
 
-                Date date = new Date();
-                date.setTime(data.getTemps().get(i).getTime());
-                String formattedDate=new SimpleDateFormat("MM/dd/yyyy").format(date);
-
-
-                System.out.println(formattedDate);
-                if (formattedDate.equals(s)){
+                if (data.getDataList().get(i).getTime().equals(s)) {
                     pos = i;
                 }
             }
-            if (i== data.getTemps().size()) {
+            if (i == data.getDataList().size()) {
+                setTime(pos);
                 temp.setText(temparature.get(pos) + "");
-            }*/
-
-            Date date = new Date();
-            date.setTime(data.getTime());
-            String formattedDate=new SimpleDateFormat("MM/dd/yyyy").format(date);
-
-            temp.setText(data.getTemp().getTemp()+"");
+            }
         }
     };
+
+    private void setTime(int position) {
+        date.setText(time.get(pos));
+    }
 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.back:
-                if (pos>0) {
+                if (pos > 0) {
                     pos--;
+                    setTime(pos);
                     temp.setText(temparature.get(pos) + "");
-                }else Toast.makeText(MainActivity.this,"No Previous data",Toast.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(MainActivity.this, "No Previous data", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.forward:
-                if (pos<size) {
+                if (pos < size - 1) {
                     pos++;
+                    setTime(pos);
                     temp.setText(temparature.get(pos) + "");
-                }else Toast.makeText(MainActivity.this,"No next data",Toast.LENGTH_SHORT).show();
+                } else Toast.makeText(MainActivity.this, "No next data", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
