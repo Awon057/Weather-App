@@ -56,6 +56,12 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout swipeLayout;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        getLocation();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -92,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
 
         Date d = new Date();
         s = DateFormat.format("MM/dd/yyyy", d.getTime());
-        getLocation();
     }
 
     private void getLocation() {
