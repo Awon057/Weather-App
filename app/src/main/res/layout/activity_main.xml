@@ -16,16 +16,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <TextView
             android:id="@+id/back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_back" />
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"/>
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:id="@+id/swipe_layout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:elevation="5dp"
             android:orientation="vertical">
 
             <TextView
@@ -47,10 +50,11 @@
                 android:textSize="20sp" />
         </LinearLayout>
 
-        <ImageView
+        <TextView
             android:id="@+id/forward"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_forward" />
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"/>
     </LinearLayout>
 </LinearLayout>

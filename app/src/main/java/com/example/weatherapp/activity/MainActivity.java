@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import com.example.weatherapp.model.Data;
 import com.example.weatherapp.model.Temp;
 import com.example.weatherapp.sync.WeatherSync;
 import com.example.weatherapp.util.ReturnData;
+import com.example.weatherapp.util.SwipeListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
     private double longitude;
     private double latitude;
@@ -47,10 +49,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int pos = 0;
     private long size;
     private long minn = 999999999;
-    private ImageView back;
-    private ImageView forward;
+    private TextView back;
+    private TextView forward;
     private CharSequence s;
     private TextView date;
+    private LinearLayout swipeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +62,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         temp = (TextView) findViewById(R.id.temp);
         date = (TextView) findViewById(R.id.time);
-        back = (ImageView) findViewById(R.id.back);
-        forward = (ImageView) findViewById(R.id.forward);
+        back = (TextView) findViewById(R.id.back);
+        forward = (TextView) findViewById(R.id.forward);
+        swipeLayout = (LinearLayout) findViewById(R.id.swipe_layout);
+
+        swipeLayout.setOnTouchListener(new SwipeListener(MainActivity.this) {
+            public void onSwipeRight() {
+                if (pos > 0) {
+                    pos--;
+                    temp.setText(temparature.get(pos) + "");
+                    setTime(pos);
+                    setBackNxt(pos);
+                } else
+                    Toast.makeText(MainActivity.this, "No Previous data", Toast.LENGTH_SHORT).show();
+            }
+
+            public void onSwipeLeft() {
+                if (pos < size - 1) {
+                    pos++;
+                    temp.setText(temparature.get(pos) + "");
+                    setTime(pos);
+                    setBackNxt(pos);
+                } else Toast.makeText(MainActivity.this, "No next data", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         temparature = new ArrayList<>();
         time = new ArrayList<>();
@@ -68,9 +93,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Date d = new Date();
         s = DateFormat.format("MM/dd/yyyy", d.getTime());
         getLocation();
-
-        back.setOnClickListener(this);
-        forward.setOnClickListener(this);
     }
 
     private void getLocation() {
@@ -161,34 +183,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             if (i == data.getDataList().size()) {
                 setTime(pos);
+                setBackNxt(pos);
                 temp.setText(temparature.get(pos) + "");
             }
         }
     };
 
     private void setTime(int position) {
-        date.setText(time.get(pos));
+        date.setText(time.get(position));
     }
 
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.back:
-                if (pos > 0) {
-                    pos--;
-                    setTime(pos);
-                    temp.setText(temparature.get(pos) + "");
-                } else
-                    Toast.makeText(MainActivity.this, "No Previous data", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.forward:
-                if (pos < size - 1) {
-                    pos++;
-                    setTime(pos);
-                    temp.setText(temparature.get(pos) + "");
-                } else Toast.makeText(MainActivity.this, "No next data", Toast.LENGTH_SHORT).show();
-                break;
-        }
+    private void setBackNxt(int position) {
+        if (position != 0)
+            back.setText(temparature.get(pos - 1));
+        else back.setText("");
+        if (position != size - 1)
+            forward.setText(temparature.get(position + 1));
+        else forward.setText("");
     }
 }
