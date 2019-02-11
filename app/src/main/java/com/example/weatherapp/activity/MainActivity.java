@@ -7,6 +7,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
@@ -28,6 +30,8 @@ import com.example.weatherapp.sync.WeatherSync;
 import com.example.weatherapp.util.ReturnData;
 import com.example.weatherapp.util.SwipeListener;
 
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        checkInternet();
         getLocation();
     }
 
@@ -99,6 +104,32 @@ public class MainActivity extends AppCompatActivity {
         Date d = new Date();
         s = DateFormat.format("MM/dd/yyyy", d.getTime());
     }
+
+
+    private void checkInternet() {
+        new Thread(new Runnable() {
+            public void run() {
+                // a potentially time consuming task
+                try {
+                    URL myUrl = new URL("http://google.com");
+                    URLConnection connection = myUrl.openConnection();
+                    connection.setConnectTimeout(3000);
+                    connection.connect();
+                } catch (Exception e) {
+                    mHandler.sendEmptyMessage(0);
+                }
+            }
+        }).start();
+    }
+
+    Handler mHandler = new Handler()
+    {
+        public void handleMessage(Message msg)
+        {
+            Toast.makeText(MainActivity.this,"No internet connection",Toast.LENGTH_LONG).show();
+        }
+    };
+
 
     private void getLocation() {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
