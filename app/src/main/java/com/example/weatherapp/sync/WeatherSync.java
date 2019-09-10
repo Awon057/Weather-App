@@ -24,7 +24,6 @@ public class WeatherSync {
             @Override
             public void onResponse(Call<Data> call, Response<Data> response) {
                 if (response.isSuccessful()) {
-                    System.out.println("lat: ");
                     returnData.returnData(response.body());
                 }
             }

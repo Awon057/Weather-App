@@ -1,6 +1,7 @@
 package com.example.weatherapp.activity;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -44,12 +45,9 @@ public class MainActivity extends AppCompatActivity {
     private double latitude;
     private boolean isLocationPermissionGranted;
     private LocationManager locationManager;
-    private ViewPager pager;
-    private SliderLayout sliderShow;
     private TextView temp;
     private ArrayList<String> temparature;
     private ArrayList<String> time;
-    private long timeInMili;
     int pos = 0;
     private long size;
     private long minn = 999999999;
@@ -58,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private CharSequence s;
     private TextView date;
     private LinearLayout swipeLayout;
+    private ProgressDialog progress;
 
     @Override
     protected void onResume() {
@@ -102,9 +101,8 @@ public class MainActivity extends AppCompatActivity {
         time = new ArrayList<>();
 
         Date d = new Date();
-        s = DateFormat.format("MM/dd/yyyy", d.getTime());
+        s = DateFormat.format("yyyy-MM-dd H:m:s", d.getTime());
     }
-
 
     private void checkInternet() {
         new Thread(new Runnable() {
@@ -130,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
     private void getLocation() {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -152,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
 
+                        showProgress();
                         WeatherSync.getData(latitude, longitude, returnData);
                     }
 
@@ -178,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
                         latitude = location.getLatitude();
                         longitude = location.getLongitude();
 
+                        showProgress();
                         WeatherSync.getData(latitude, longitude, returnData);
                     }
 
@@ -201,7 +200,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(enableGPS);
             }
         }
-
     }
 
     ReturnData returnData = new ReturnData() {
@@ -211,17 +209,18 @@ public class MainActivity extends AppCompatActivity {
             size = data.getDataList().size();
             for (i = 0; i < data.getDataList().size(); i++) {
                 time.add(data.getDataList().get(i).getTime());
-                temparature.add(data.getDataList().get(i).getTemp().getDayTemp() + "");
+                temparature.add((int)(data.getDataList().get(i).getTemp().getDayTemp()-273) + "\u2103");
 
-                if (data.getDataList().get(i).getTime().equals(s)) {
+                /*if (data.getDataList().get(i).getTime().equals(s)) {
                     pos = i;
-                }
+                }*/
             }
             if (i == data.getDataList().size()) {
                 setTime(pos);
                 setBackNxt(pos);
                 temp.setText(temparature.get(pos) + "");
             }
+            dismissProgress();
         }
     };
 
@@ -236,5 +235,17 @@ public class MainActivity extends AppCompatActivity {
         if (position != size - 1)
             forward.setText(temparature.get(position + 1));
         else forward.setText("");
+    }
+
+    private void showProgress(){
+        progress = new ProgressDialog(this);
+        progress.setTitle("Fetching Data");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
+    }
+
+    private void dismissProgress(){
+        progress.dismiss();
     }
 }
